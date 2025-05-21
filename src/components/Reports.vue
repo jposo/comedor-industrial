@@ -5,22 +5,27 @@
   <v-container>
     <h3>Detalles de Consumos del Día</h3>
   </v-container>
-  <v-container>
-    <v-data-table-server
-      v-model:item-per-page="itemsPerPage"
-      :headers="headers1"
-      :items="items1"
-      :items-length="totalItems1"
-      :loading="loading1"
-      @update:options="consumosDetallados"
-    >
-      <template v-slot:item.fecha="{ item }">
-        {{ new Date(item.fecha).toLocaleDateString() }}
-      </template>
-      <template v-slot:item.monto_total_venta="{ item }">
-        {{ `$${item.monto_total_venta.toFixed(2)}` }}
-      </template>
-    </v-data-table-server>
+  <v-container class="d-flex flex-row">
+    <v-container class="w-50">
+      <v-date-picker v-model="month" />
+    </v-container>
+    <v-container>
+      <v-data-table-server
+        v-model:item-per-page="itemsPerPage"
+        :headers="headers1"
+        :items="items1"
+        :items-length="totalItems1"
+        :loading="loading1"
+        @update:options="consumosDetallados"
+      >
+        <template v-slot:item.fecha="{ item }">
+          {{ new Date(item.fecha).toLocaleDateString() }}
+        </template>
+        <template v-slot:item.monto_total_venta="{ item }">
+          {{ `$${item.monto_total_venta.toFixed(2)}` }}
+        </template>
+      </v-data-table-server>
+    </v-container>
   </v-container>
 
   <v-container>
@@ -58,6 +63,7 @@ const headers1 = ref([
   { title: "Total de Venta", key: "monto_total_venta", sortable: false },
 ]);
 const items1 = ref([]);
+const month = ref(new Date());
 
 const totalItems2 = ref(0);
 const loading2 = ref(true);

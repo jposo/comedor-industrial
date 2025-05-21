@@ -3,24 +3,17 @@
     <h2>Registrar Consumo</h2>
   </v-container>
   <v-container>
+    <h3>Tiempo Actual: {{ time }}</h3>
+    <h3>Tipo de Consumo: {{ type }}</h3>
+  </v-container>
+  <v-container>
     <v-form ref="form">
-      <v-select
-        v-model="consumption"
-        :hint="`${consumption?.name} ($${consumption?.price.toFixed(2)})`"
-        :items="items"
-        item-title="name"
-        item-value="id"
-        label="Consumo"
-        persistent-hint
-        return-object
-        single-line
-        required
-      ></v-select>
-      <v-text-field
+      <v-number-input
         v-model="number"
         label="Número de empleado"
+        control-variant="stacked"
         required
-      ></v-text-field>
+      ></v-number-input>
       <v-btn class="mt-2" @click="registerConsumption" block>Registrar</v-btn>
     </v-form>
     <v-snackbar v-model="snackbar" :timeout="3000">
@@ -44,9 +37,23 @@ const snackbar = ref(false);
 const allow = ref(true);
 
 const consumption = shallowRef({ id: 0, name: "Consumo", price: 0 });
-const number = ref("");
+const number = ref(1);
 
-const items = ref([]);
+const time = ref('');
+const type = ref('');
+
+onMounted(() => {
+  updateTime();
+  setInterval(() => {
+    updateTime();
+  }, 1000);
+});
+
+const updateTime = () => {
+  const date = new Date();
+  time.value = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  type.value = consumptionType() ?? "No disponible";
+}
 
 const consumptionType = () => {
   const date = new Date();
@@ -58,39 +65,6 @@ const consumptionType = () => {
       ? "Comida"
       : undefined;
 };
-
-onMounted(async () => {
-  const type = consumptionType();
-
-  if (type === undefined) {
-    displaySnackbar("Activo entre 6AM - 3PM");
-    allow.value = false;
-    return;
-  }
-
-  const response = await fetch(
-    "https://iqkwvr8wsh.execute-api.us-east-1.amazonaws.com/v1/TipoConsumo",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-
-  const body = await response.json();
-
-  const results = body.results.filter((r) => r.tipo === type);
-  results.forEach((r) => {
-    items.value.push({
-      id: r.id_consumo,
-      name: r.consumo,
-      price: r.precio,
-    });
-  });
-
-  consumption.value = items.value[0];
-});
 
 const registerConsumption = async () => {
   const type = consumptionType();
@@ -112,7 +86,7 @@ const registerConsumption = async () => {
 
   submitting.value = true;
 
-  console.log("Registering Consumption:", number.value, consumption.value);
+  console.log("Registering Consumption:", number.value, type);
 
   const response = await fetch(
     "https://iqkwvr8wsh.execute-api.us-east-1.amazonaws.com/v1/RegistrarConsumo",
@@ -122,7 +96,7 @@ const registerConsumption = async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id_consumo: consumption.value.id,
+        tipo_consumo: type,
         id_empleado: parseInt(number.value),
       }),
     },

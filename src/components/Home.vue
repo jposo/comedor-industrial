@@ -39,7 +39,7 @@ const headers = ref([
   { title: "Nombre", key: "nombre", sortable: false },
   { title: "Número", key: "id_empleado", sortable: false },
   { title: "Consumo", key: "consumo", sortable: false },
-  { title: "Tipo de Consumo", key: "tipo", sortable: false },
+  // { title: "Tipo de Consumo", key: "tipo", sortable: false },
   { title: "Precio", key: "precio", sortable: false },
 ]);
 const items = ref([]);

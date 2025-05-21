@@ -16,14 +16,27 @@
         label="Departamento"
         required
       ></v-text-field>
-      <v-file-input
-        v-model="foto"
-        :rules="fotoRules"
-        accept="image/*"
-        label="Fotografía"
-        prepend-icon="mdi-camera"
-        required
-      ></v-file-input>
+      <v-container class="d-flex flex-row align-center justify-center">
+        <v-container style="width: 80px; height: 80px">
+          <v-img
+            v-if="foto"
+            :src="createObjectURL(foto)"
+            alt="Foto"
+            max-width="80"
+            max-height="80"
+            contain
+            class="rounded"
+          />
+        </v-container>
+        <v-file-input
+          v-model="foto"
+          :rules="fotoRules"
+          accept="image/*"
+          label="Fotografía"
+          prepend-icon="mdi-camera"
+          required
+        ></v-file-input>
+      </v-container>
       <v-btn class="mt-2" @click="registerEmployee" block>Registrar</v-btn>
     </v-form>
     <v-snackbar v-model="snackbar" :timeout="3000">
@@ -70,6 +83,13 @@ const fotoRules = [
 const displaySnackbar = (text) => {
   snackbarText.value = text;
   snackbar.value = true;
+};
+
+const createObjectURL = (file) => {
+  if (file) {
+    return URL.createObjectURL(file);
+  }
+  return null;
 };
 
 const registerEmployee = async () => {
