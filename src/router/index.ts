@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
+// @ts-ignore
 import NewEmployeeForm from "@/components/NewEmployeeForm.vue";
+// @ts-ignore
 import Home from "@/components/Home.vue";
+// @ts-ignore
 import RegisterConsumption from "@/components/RegisterConsumption.vue";
+// @ts-ignore
 import Reports from "@/components/Reports.vue";
 
 const routes = [

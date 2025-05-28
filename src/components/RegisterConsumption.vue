@@ -14,7 +14,21 @@
         control-variant="stacked"
         required
       ></v-number-input>
-      <v-btn class="mt-2" @click="registerConsumption" block>Registrar</v-btn>
+      <v-btn 
+        class="mt-2" 
+        @click="registerConsumption" 
+        block
+        :loading="submitting"
+        :disabled="submitting"
+      >
+        {{ submitting ? 'Registrando...' : 'Registrar' }}
+        <template v-slot:loader>
+          <v-progress-circular
+            indeterminate
+            color="white"
+          ></v-progress-circular>
+        </template>
+      </v-btn>
     </v-form>
     <v-snackbar v-model="snackbar" :timeout="3000">
       {{ snackbarText }}
@@ -39,8 +53,8 @@ const allow = ref(true);
 const consumption = shallowRef({ id: 0, name: "Consumo", price: 0 });
 const number = ref(1);
 
-const time = ref('');
-const type = ref('');
+const time = ref("");
+const type = ref("");
 
 onMounted(() => {
   updateTime();
@@ -51,13 +65,17 @@ onMounted(() => {
 
 const updateTime = () => {
   const date = new Date();
-  time.value = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  time.value = date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
   type.value = consumptionType() ?? "No disponible";
-}
+};
 
 const consumptionType = () => {
   const date = new Date();
-  const hour = 14; //date.getHours();
+  const hour = date.getHours();
 
   return hour >= 6 && hour < 11
     ? "Desayuno"
@@ -75,7 +93,6 @@ const registerConsumption = async () => {
   }
 
   if (submitting.value) {
-    displaySnackbar("Se esta registrando un consumo");
     return;
   }
 
